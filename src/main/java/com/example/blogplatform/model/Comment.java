@@ -10,8 +10,12 @@ public class Comment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
-    private Post postId;
+    private Post post;
 
     private String content;
 
@@ -27,8 +31,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Post postId, String content, Long likes, User replyBy, LocalDateTime publicationDate) {
-        this.postId = postId;
+    public Comment(User user, Post post, String content, Long likes, User replyBy, LocalDateTime publicationDate) {
+        this.user = user;
+        this.post = post;
         this.content = content;
         this.likes = likes;
         this.replyBy = replyBy;
@@ -43,12 +48,20 @@ public class Comment {
         this.id = id;
     }
 
-    public Post getPostId() {
-        return postId;
+    public User getUser() {
+        return user;
     }
 
-    public void setPostId(Post postId) {
-        this.postId = postId;
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
     }
 
     public String getContent() {

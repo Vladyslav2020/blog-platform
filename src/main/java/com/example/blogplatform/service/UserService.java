@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.example.blogplatform.security.Role.USER;
@@ -34,6 +35,10 @@ public class UserService {
 
     public boolean existsById(Long id){
         return userRepository.existsById(id);
+    }
+
+    public Optional<User> findById(Long userId){
+        return userRepository.findById(userId);
     }
 
     public User findByEmail(String email){

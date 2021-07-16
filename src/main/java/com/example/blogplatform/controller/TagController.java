@@ -35,6 +35,9 @@ public class TagController {
     @PostMapping
     @PreAuthorize("hasAuthority('tag:create')")
     public void addTag(@RequestBody String body){
+        /*
+            - name
+         */
         JSONObject jsonObject = new JSONObject(body);
         String name = jsonObject.getString("name");
         tagService.add(name);
@@ -43,8 +46,11 @@ public class TagController {
     @PutMapping("{id}")
     @PreAuthorize("hasAuthority('tag:management')")
     public void updateTag(@PathVariable Long id, @RequestBody String body){
+        /*
+            - ?name
+         */
         JSONObject jsonObject = new JSONObject(body);
-        String name = jsonObject.getString("name");
+        String name = jsonObject.has("name")? jsonObject.getString("name"): null;
         Optional<Tag> optionalTag = tagService.findById(id);
         if (optionalTag.isPresent()){
             tagService.updateTag(optionalTag.get(), name);

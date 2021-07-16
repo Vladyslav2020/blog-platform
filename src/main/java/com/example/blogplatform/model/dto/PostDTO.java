@@ -19,9 +19,6 @@ public class PostDTO {
     private String publicationDate;
     private Long userId;
 
-    public PostDTO() {
-    }
-
     public PostDTO(Long id, String title, String description, String content, List<Tag> tags, Long likes, Long views, String publicationDate, Long userId) {
         this.id = id;
         this.title = title;
