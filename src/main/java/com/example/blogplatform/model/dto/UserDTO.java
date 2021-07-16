@@ -8,10 +8,10 @@ public class UserDTO {
     private String email;
     private String avatar;
     private String about;
-    private LocalDateTime registrationDate;
+    private String registrationDate;
     private boolean activated;
 
-    public UserDTO(Long id, String username, String email, String avatar, String about, LocalDateTime registrationDate, boolean activated) {
+    public UserDTO(Long id, String username, String email, String avatar, String about, String registrationDate, boolean activated) {
         this.id = id;
         this.userName = username;
         this.email = email;
@@ -37,7 +37,7 @@ public class UserDTO {
         return about;
     }
 
-    public LocalDateTime getRegistrationDate() {
+    public String getRegistrationDate() {
         return registrationDate;
     }
 
@@ -57,7 +57,7 @@ public class UserDTO {
         this.about = about;
     }
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
+    public void setRegistrationDate(String registrationDate) {
         this.registrationDate = registrationDate;
     }
 

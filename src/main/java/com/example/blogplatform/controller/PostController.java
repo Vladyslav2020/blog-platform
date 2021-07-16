@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/psots")
+@RequestMapping("/api/v1/posts")
 public class PostController {
     private final PostService postService;
     private final TagService tagService;
@@ -44,7 +44,7 @@ public class PostController {
                     post.getContent(),
                     post.getTags().stream().map(PostTags::getTag).collect(Collectors.toList()),
                     post.getLikes(),
-                    post.getViews(), post.getPublicationDate(),
+                    post.getViews(), post.getPublicationDate().toString(),
                     post.getUser().getId()
             );
         }
@@ -63,7 +63,7 @@ public class PostController {
                     item.getTags().stream().map(elem -> elem.getTag()).collect(Collectors.toList()),
                     item.getLikes(),
                     item.getViews(),
-                    item.getPublicationDate(),
+                    item.getPublicationDate().toString(),
                     item.getUser().getId()))
                     .collect(Collectors.toList());
         }
@@ -133,6 +133,7 @@ public class PostController {
         if (optionalPost.isPresent()){
             Post post = optionalPost.get();
             if (user.getId().equals(userId) && user.getId().equals(post.getUser().getId())){
+                postTagsService.deleteAllByPost(post);
                 postService.deleteById(id);
             }
         }

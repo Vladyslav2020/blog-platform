@@ -43,6 +43,6 @@ public class AuthController {
          */
         User user = AuthenticationUserHolder.getUser();
         userService.sendMessage(user);
-        return new UserDTO(user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getAbout(), user.getRegistrationDate(), user.isActivated());
+        return new UserDTO(user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getAbout(), user.getRegistrationDate().toString(), user.isActivated());
     }
 }

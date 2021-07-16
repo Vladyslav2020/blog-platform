@@ -16,10 +16,13 @@ public class PostDTO {
     private List<Tag> tags;
     private Long likes;
     private Long views;
-    private LocalDateTime publicationDate;
+    private String publicationDate;
     private Long userId;
 
-    public PostDTO(Long id, String title, String description, String content, List<Tag> tags, Long likes, Long views, LocalDateTime publicationDate, Long userId) {
+    public PostDTO() {
+    }
+
+    public PostDTO(Long id, String title, String description, String content, List<Tag> tags, Long likes, Long views, String publicationDate, Long userId) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -87,11 +90,11 @@ public class PostDTO {
         this.views = views;
     }
 
-    public LocalDateTime getPublicationDate() {
+    public String getPublicationDate() {
         return publicationDate;
     }
 
-    public void setPublicationDate(LocalDateTime publicationDate) {
+    public void setPublicationDate(String publicationDate) {
         this.publicationDate = publicationDate;
     }
 

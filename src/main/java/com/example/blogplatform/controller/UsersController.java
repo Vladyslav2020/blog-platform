@@ -25,7 +25,7 @@ public class UsersController {
     public UserDTO getUser(@PathVariable Long id) throws AccessDeniedException {
         User user = AuthenticationUserHolder.getUser();
         if (user.getId().equals(id)){
-            return new UserDTO(user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getAbout(), user.getRegistrationDate(), user.isActivated());
+            return new UserDTO(user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getAbout(), user.getRegistrationDate().toString(), user.isActivated());
         }
         throw new AccessDeniedException("Access to user data is denied");
     }
