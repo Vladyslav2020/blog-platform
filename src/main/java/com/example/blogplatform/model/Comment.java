@@ -23,7 +23,7 @@ public class Comment {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reply_by")
-    private User replyBy;
+    private Comment replyBy;
 
     @JoinColumn(name = "publication_date")
     private LocalDateTime publicationDate;
@@ -31,7 +31,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(User user, Post post, String content, Long likes, User replyBy, LocalDateTime publicationDate) {
+    public Comment(User user, Post post, String content, Long likes, Comment replyBy, LocalDateTime publicationDate) {
         this.user = user;
         this.post = post;
         this.content = content;
@@ -80,11 +80,11 @@ public class Comment {
         this.likes = likes;
     }
 
-    public User getReplyBy() {
+    public Comment getReplyBy() {
         return replyBy;
     }
 
-    public void setReplyBy(User replyBy) {
+    public void setReplyBy(Comment replyBy) {
         this.replyBy = replyBy;
     }
 

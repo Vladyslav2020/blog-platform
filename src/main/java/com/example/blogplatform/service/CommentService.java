@@ -27,7 +27,7 @@ public class CommentService {
         return commentRepository.getAllByUser(user);
     }
 
-    public void add(User user, Post post, String content, User replyBy){
+    public void add(User user, Post post, String content, Comment replyBy){
         commentRepository.save(new Comment(user, post, content, 0L, replyBy, LocalDateTime.now()));
     }
 

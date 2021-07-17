@@ -81,10 +81,10 @@ public class CommentController {
                 JSONObject jsonObject = new JSONObject(body);
                 String content = jsonObject.getString("content");
                 Long replyById = jsonObject.has("replyBy")? jsonObject.getLong("replyBy"): null;
-                Optional<User> optionalUser = replyById != null? userService.findById(replyById): Optional.empty();
-                User replyBy = null;
-                if (optionalUser.isPresent()){
-                    replyBy = optionalUser.get();
+                Optional<Comment> optionalComment = replyById != null? commentService.findById(replyById): Optional.empty();
+                Comment replyBy = null;
+                if (optionalComment.isPresent()){
+                    replyBy = optionalComment.get();
                 }
                 commentService.add(user, optionalPost.get(), content, replyBy);
             }

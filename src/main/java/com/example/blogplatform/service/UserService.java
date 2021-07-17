@@ -46,6 +46,14 @@ public class UserService {
     }
 
     @Transactional
+    public void setActivation(User user){
+        if (user.getActivationCode() != null){
+            user.setActivationCode(null);
+            user.setActivated(true);
+        }
+    }
+
+    @Transactional
     public void update(User user, String userName, String password, String avatar, String about){
         if (userName != null && !user.getUserName().equals(userName)){
             user.setUserName(userName);
