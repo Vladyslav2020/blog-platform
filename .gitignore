@@ -34,6 +34,8 @@ build/
 
 .mvn
 
+application.properties
+
 mvnw
 
 *.cmd
