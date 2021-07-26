@@ -2,6 +2,8 @@ package com.example.blogplatform.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -33,6 +36,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try{
+            if (request.getMethod().equals(HttpMethod.OPTIONS.name())){
+                return null;
+            }
             JwtAuthenticationRequest jwtAuthenticationRequest = new ObjectMapper()
                     .readValue(request.getInputStream(), JwtAuthenticationRequest.class);
             Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -57,6 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(jwtConfig.getExpirationInDays())))
                 .signWith(secretKey)
                 .compact();
+        response.addHeader(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
         response.addHeader(jwtConfig.getAuthorizationHeader(), jwtConfig.getTokenPrefix() + token);
         SecurityContextHolder.getContext().setAuthentication(authResult);
         chain.doFilter(request, response);

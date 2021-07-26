@@ -24,13 +24,14 @@ public class UserService {
         this.mailSenderService = mailSenderService;
     }
 
-    public void add(String username, String email, String password){
+    public User add(String username, String email, String password){
         User user = new User(username, email, password, null, null, false, USER, LocalDateTime.now(), UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (userRepository.existsByEmail(email)){
             throw new IllegalStateException("Email taken");
         }
         userRepository.save(user);
+        return user;
     }
 
     public boolean existsById(Long id){
@@ -54,19 +55,20 @@ public class UserService {
     }
 
     @Transactional
-    public void update(User user, String userName, String password, String avatar, String about){
-        if (userName != null && !user.getUserName().equals(userName)){
+    public User update(User user, String userName, String password, String avatar, String about){
+        if (userName != null && !userName.equals(user.getUserName())){
             user.setUserName(userName);
         }
-        if (password != null && !user.getPassword().equals(password)){
+        if (password != null && !password.equals(user.getPassword())){
             user.setPassword(passwordEncoder.encode(password));
         }
-        if (avatar != null && !user.getAvatar().equals(avatar)){
+        if (avatar != null && !avatar.equals(user.getAvatar())){
             user.setAvatar(avatar);
         }
-        if (about != null && !user.getAbout().equals(about)){
-            user.setAvatar(avatar);
+        if (about != null && !about.equals(user.getAbout())){
+            user.setAbout(about);
         }
+        return user;
     }
 
     public void sendMessage(User user) {

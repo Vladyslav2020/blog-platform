@@ -1,5 +1,7 @@
 package com.example.blogplatform.model.dto;
 
+import com.example.blogplatform.model.User;
+
 import java.time.LocalDateTime;
 
 public class UserDTO {
@@ -19,6 +21,16 @@ public class UserDTO {
         this.about = about;
         this.registrationDate = registrationDate;
         this.activated = activated;
+    }
+
+    public UserDTO(User user){
+        this.id = user.getId();
+        this.userName = user.getUserName();
+        this.email = user.getEmail();
+        this.avatar = user.getAvatar();
+        this.about = user.getAbout();
+        this.registrationDate = user.getRegistrationDate().toString();
+        this.activated = user.isActivated();
     }
 
     public Long getId() {

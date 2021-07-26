@@ -34,7 +34,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(Post post, String title, String description, String content){
+    public Post updatePost(Post post, String title, String description, String content){
         if (title != null && !title.equals(post.getTitle())){
             post.setTitle(title);
         }
@@ -44,16 +44,19 @@ public class PostService {
         if (content != null && !content.equals(post.getContent())){
             post.setContent(content);
         }
+        return post;
     }
 
     @Transactional
-    public void putLike(Post post){
+    public Post putLike(Post post){
         post.setLikes(post.getLikes() + 1);
+        return post;
     }
 
     @Transactional
-    public void addView(Post post){
+    public Post addView(Post post){
         post.setViews(post.getViews() + 1);
+        return post;
     }
 
     public void deleteById(Long id){

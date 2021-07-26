@@ -1,12 +1,15 @@
 package com.example.blogplatform.model.dto;
 
+import com.example.blogplatform.model.Post;
 import com.example.blogplatform.model.PostTags;
 import com.example.blogplatform.model.Tag;
 import com.example.blogplatform.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PostDTO {
     private Long id;
@@ -29,6 +32,21 @@ public class PostDTO {
         this.views = views;
         this.publicationDate = publicationDate;
         this.userId = userId;
+    }
+
+    public PostDTO(Post post){
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.description = post.getDescription();
+        this.content = post.getContent();
+        if (post.getTags() == null || post.getTags().size() == 0)
+            this.tags = new ArrayList<>();
+        else
+            this.tags = post.getTags().stream().map(PostTags::getTag).collect(Collectors.toList());
+        this.likes = post.getLikes();
+        this.views = post.getViews();
+        this.publicationDate = post.getPublicationDate().toString();
+        this.userId = post.getUser().getId();
     }
 
     public Long getId() {
