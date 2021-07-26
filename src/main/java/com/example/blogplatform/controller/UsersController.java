@@ -1,15 +1,18 @@
 package com.example.blogplatform.controller;
 
 import com.example.blogplatform.model.User;
+import com.example.blogplatform.model.dto.PublicUserDTO;
 import com.example.blogplatform.model.dto.UserDTO;
 import com.example.blogplatform.security.AuthenticationUserHolder;
 import com.example.blogplatform.security.Permission;
 import com.example.blogplatform.service.UserService;
+import javassist.NotFoundException;
 import org.json.JSONObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -21,18 +24,17 @@ public class UsersController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAuthority('user:read')")
-    public UserDTO getUser(@PathVariable Long id) throws AccessDeniedException {
-        User user = AuthenticationUserHolder.getUser();
-        if (user.getId().equals(id)){
-            return new UserDTO(user.getId(), user.getUserName(), user.getEmail(), user.getAvatar(), user.getAbout(), user.getRegistrationDate().toString(), user.isActivated());
+    public PublicUserDTO getUser(@PathVariable Long id) throws NotFoundException {
+        Optional<User> user = userService.findById(id);
+        if (user.isPresent()){
+            return new PublicUserDTO(user.get());
         }
-        throw new AccessDeniedException("Access to user data is denied");
+        throw new NotFoundException("User is not found");
     }
 
     @PutMapping("{id}")
     @PreAuthorize("hasAuthority('user:update')")
-    public void updateUser(@PathVariable Long id, @RequestBody String body) throws AccessDeniedException {
+    public UserDTO updateUser(@PathVariable Long id, @RequestBody String body) throws AccessDeniedException {
         /*
             - userName
             - password
@@ -47,8 +49,7 @@ public class UsersController {
         String avatar = jsonObject.has("avatar") ? jsonObject.getString("avatar"): null;
         String about = jsonObject.has("about") ? jsonObject.getString("about"): null;
         if (user.getId().equals(id)){
-            userService.update(user, userName, password, avatar, about);
-            return;
+            return new UserDTO(userService.update(user, userName, password, avatar, about));
         }
         throw new AccessDeniedException("Access to user data is denied");
     }

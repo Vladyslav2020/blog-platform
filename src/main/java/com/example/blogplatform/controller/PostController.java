@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +39,7 @@ public class PostController {
         Optional<Post> optionalPost = postService.findById(id);
         if (optionalPost.isPresent()){
             Post post = optionalPost.get();
-            return new PostDTO(post.getId(),
-                    post.getTitle(),
-                    post.getDescription(),
-                    post.getContent(),
-                    post.getTags().stream().map(PostTags::getTag).collect(Collectors.toList()),
-                    post.getLikes(),
-                    post.getViews(), post.getPublicationDate().toString(),
-                    post.getUser().getId()
-            );
+            return new PostDTO(post);
         }
         return null;
     }
@@ -56,15 +49,7 @@ public class PostController {
     public List<PostDTO> getAllUserPosts(@RequestParam(name = "user_id") Long userId){
         User user = AuthenticationUserHolder.getUser();
         if (user.getId().equals(userId)){
-            return postService.getAllUserPosts(user).stream().map(item -> new PostDTO(item.getId(),
-                    item.getTitle(),
-                    item.getDescription(),
-                    item.getContent(),
-                    item.getTags().stream().map(elem -> elem.getTag()).collect(Collectors.toList()),
-                    item.getLikes(),
-                    item.getViews(),
-                    item.getPublicationDate().toString(),
-                    item.getUser().getId()))
+            return postService.getAllUserPosts(user).stream().map(PostDTO::new)
                     .collect(Collectors.toList());
         }
         return null;
@@ -72,7 +57,7 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('post:create')")
-    public void publishNewPost(@RequestParam(name = "user_id") Long userId, @RequestBody String body){
+    public PostDTO publishNewPost(@RequestParam(name = "user_id") Long userId, @RequestBody String body) throws NotFoundException {
         /*
             - title
             - description
@@ -81,6 +66,9 @@ public class PostController {
                 - tag
          */
         User user = AuthenticationUserHolder.getUser();
+        if (!user.getId().equals(userId)){
+            throw new InvalidParameterException("User ID is invalid");
+        }
         JSONObject jsonObject = new JSONObject(body);
         String title = jsonObject.getString("title");
         String description = jsonObject.getString("description");
@@ -90,21 +78,23 @@ public class PostController {
         for (int i = 0; i < tags.length(); i++){
             tagList.add(tags.getJSONObject(i).getString("name"));
         }
-        for (int i = 0; i < tagList.size(); i++){
-            if (!tagService.existsByName(tagList.get(i))){
-                tagService.add(tagList.get(i));
+        for (String tagName : tagList) {
+            if (!tagService.existsByName(tagName)) {
+                tagService.add(tagName);
             }
         }
         Post post = postService.addPost(user, title, description, content, 0L, 0L);
-        for (int i = 0; i < tagList.size(); i++){
-            Tag tag = tagService.findByName(tagList.get(i));
+        for (String tagName : tagList) {
+            Tag tag = tagService.findByName(tagName);
             postTagsService.add(post, tag);
         }
+        post = postService.findById(post.getId()).get();
+        return new PostDTO(post);
     }
 
     @PutMapping
     @PreAuthorize("hasAuthority('post:update')")
-    public void updatePost(@RequestParam(name = "user_id") Long userId, @RequestParam Long id, @RequestBody String body) throws NotFoundException {
+    public PostDTO updatePost(@RequestParam(name = "user_id") Long userId, @RequestParam Long id, @RequestBody String body) throws NotFoundException {
         /*
             - title
             - description
@@ -119,10 +109,10 @@ public class PostController {
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
             if (user.getId().equals(userId) && post.getUser().getId().equals(user.getId())){
-                postService.updatePost(post, title, description, content);
-                return;
+                return new PostDTO(postService.updatePost(post, title, description, content));
             }
         }
+        return null;
     }
 
     @DeleteMapping
@@ -141,27 +131,29 @@ public class PostController {
 
     @PutMapping("/like")
     @PreAuthorize("hasAuthority('post:read')")
-    public void putLike(@RequestParam Long id) throws NotFoundException {
+    public PostDTO putLike(@RequestParam Long id) throws NotFoundException {
         User user = AuthenticationUserHolder.getUser();
         Optional<Post> optionalPost = postService.findById(id);
         if (optionalPost.isPresent()){
             Post post = optionalPost.get();
-            if (!post.getUser().getId().equals(user.getId())){
-                postService.putLike(post);
-            }
+//            if (!post.getUser().getId().equals(user.getId())){
+                return new PostDTO(postService.putLike(post));
+//            }
         }
+        return null;
     }
 
     @PutMapping("/view")
-    @PreAuthorize("hasAuthority('post:read')")
-    public void addView(@RequestParam Long id) throws NotFoundException {
+//    @PreAuthorize("hasAuthority('post:read')")
+    public PostDTO addView(@RequestParam Long id) throws NotFoundException {
         User user = AuthenticationUserHolder.getUser();
         Optional<Post> optionalPost = postService.findById(id);
         if (optionalPost.isPresent()){
             Post post = optionalPost.get();
-            if (!post.getUser().getId().equals(user.getId())){
-                postService.addView(post);
-            }
+//            if (!post.getUser().getId().equals(user.getId())){
+                return new PostDTO(postService.addView(post));
+//            }
         }
+        return null;
     }
 }
